@@ -1,0 +1,17 @@
+name: ci/cd
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: main
+      run: |
+        echo "GITHUB_REF: ${GITHUB_REF}"
+        echo "GITHUB_SHA: ${GITHUB_SHA}"
