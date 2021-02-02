@@ -16,3 +16,5 @@ jobs:
       run: |
         echo "GITHUB_REF: ${GITHUB_REF}"
         echo "GITHUB_SHA: ${GITHUB_SHA}"
+        echo "env:"
+        env
