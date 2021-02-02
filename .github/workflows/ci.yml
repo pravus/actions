@@ -15,6 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: build
+      env:
+        DOCKER_REGISTRY: docker.carbon.cc
+        PROJECT_NAME: actions_project
+        PROJECT_OWNER: jason_hord
       run: |
         shopt -s extglob
 
