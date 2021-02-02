@@ -2,8 +2,9 @@ name: ci/cd
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+    - master
+    - staging
 
 jobs:
 
