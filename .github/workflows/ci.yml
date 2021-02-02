@@ -18,5 +18,22 @@ jobs:
       run: |
         echo "GITHUB_REF: ${GITHUB_REF}"
         echo "GITHUB_SHA: ${GITHUB_SHA}"
-        echo "env:"
-        env
+
+        shopt -s extglob
+
+        case "${GITHUB_REF}" in
+        */staging)
+          TAG="staging-${GITHUB_SHA}"
+          echo "Using staging tagging rules: ${TAG}"
+          ;;
+
+        */v+([0-9]).+([0-9]).+([0-9]))
+          TAG="$(echo ${GITHUB_REF} | cut -d '/' -f 3)"
+          echo "Using release tagging rules: ${TAG}"
+          ;;
+
+        *)
+          echo "Ignoring ref (${GITHUB_REF}) with no tagging rules"
+          exit 0
+          ;;
+        esac
