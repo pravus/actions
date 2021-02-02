@@ -14,22 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: main
+    - name: build
       run: |
-        echo "GITHUB_REF: ${GITHUB_REF}"
-        echo "GITHUB_SHA: ${GITHUB_SHA}"
-
         shopt -s extglob
 
         case "${GITHUB_REF}" in
         */staging)
-          TAG="staging-${GITHUB_SHA}"
-          echo "Using staging tagging rules: ${TAG}"
+          VERSION="staging-${GITHUB_SHA}"
+          echo "Using staging tagging rules: ${VERSION}"
           ;;
 
         */v+([0-9]).+([0-9]).+([0-9]))
-          TAG="$(echo ${GITHUB_REF} | cut -d '/' -f 3)"
-          echo "Using release tagging rules: ${TAG}"
+          VERSION="$(echo ${GITHUB_REF} | cut -d '/' -f 3)"
+          echo "Using release tagging rules: ${VERSION}"
           ;;
 
         *)
@@ -37,3 +34,15 @@ jobs:
           exit 0
           ;;
         esac
+
+        DOCKER_IMAGE="${DOCKER_REGISTRY}/${PROJECT_OWNER}/${PROJECT_NAME}:${VERSION}"
+        echo "Docker image: ${DOCKER_IMAGE}"
+
+        echo "Building container..."
+        docker build \
+          --file dockerfiles/main.dockerfile \
+          --build-arg WORKING_DIRECTORY=/opt/"${PROJECT_OWNER}"/"${PROJECT_NAME}" \
+          --tag "${DOCKER_IMAGE}" \
+          .
+
+        echo "Pushing image..."
